@@ -13,7 +13,7 @@ Tugas Individu Matkul PBP Fasilkom UI
 ## Section
 
 - [Tugas Individu 7](#Tugas-Individu-7)
-
+- [Tugas Individu 8](#Tugas-Individu-8)
 ## Tugas Individu 7
 
 1. Jelaskan apa itu widget tree pada Flutter dan bagaimana hubungan parent-child (induk-anak) bekerja antar widget.
@@ -34,3 +34,13 @@ Tugas Individu Matkul PBP Fasilkom UI
 
 6. Jelaskan konsep "hot reload" di Flutter dan bagaimana bedanya dengan "hot restart".
 - Hot reload adalah mekanisme Flutter yang menyisipkan perubahan kode ke dalam aplikasi yang sedang berjalan tanpa menghilangkan state yang ada. Fitur ini mempercepat proses pengembangan karena developer dapat langsung melihat perubahan UI atau logic sederhana tanpa memulai ulang aplikasi sepenuhnya. Sebaliknya, hot restart akan menghentikan aplikasi dan memulainya kembali dari awal, yang berarti seluruh state akan ter-reset. Walaupun lebih lambat, hot restart diperlukan ketika perubahan kode memengaruhi struktur atau state internal secara mendasar sehingga hot reload tidak mampu mengakomodasinya. Dengan kombinasi kedua fitur ini, proses iterasi pengembangan di Flutter menjadi sangat efisien dan responsif.
+## Tugas Individu 8
+
+1. Perbedaan Navigator.push() dan NavigatorpushReplacement()
+- Navigator.push() menambahkan halaman baru tanpa menghapus yang lama, sehingga pengguna bisa kembali dengan tombol back. Sedangkan Navigator.pushReplacement() mengganti halaman saat ini, membuat halaman sebelumnya tidak bisa diakses lagi. Di Football Shop, push() cocok untuk menuju halaman detail produk, sedangkan pushReplacement() untuk navigasi setelah login atau checkout.
+2. Pemanfaatan Scaffold, AppBar, dan Drawer
+- Scaffold menjadi kerangka utama halaman, AppBar menampilkan judul atau logo toko, dan Drawer menyediakan menu navigasi. Dengan kombinasi ini, Football Shop memiliki tampilan yang rapi, konsisten, dan mudah digunakan di setiap halaman.
+3. Kelebihan Padding, SingleChildScrollView, dan ListView
+- Padding memberi jarak agar tampilan lebih nyaman, SingleChildScrollView membuat konten panjang bisa digulir, dan ListView memudahkan menampilkan daftar elemen. Misalnya, form checkout di Football Shop bisa digulir dengan SingleChildScrollView agar tetap mudah diakses di layar kecil.
+4. Penyesuaian warna tema aplikasi
+- Warna tema disesuaikan lewat ThemeData di MaterialApp agar selaras dengan identitas Football Shop. Misalnya, memakai kombinasi hijau tua dan putih pada tombol, ikon, dan AppBar untuk menciptakan kesan profesional dan konsisten.
