@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sebelah_stadion/widgets/left_drawer.dart';
+import 'dart:convert';
+import 'package:provider/provider.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:sebelah_stadion/screens/menu.dart';
 
 class ProductFormPage extends StatefulWidget {
   const ProductFormPage({super.key});
@@ -12,9 +16,9 @@ class _ProductFormPageState extends State<ProductFormPage> {
   final _formKey = GlobalKey<FormState>();
 
   // State disesuaikan dengan model Django Products
-  String _name = "";
+  String _title = "";
   String _price = "";
-  String _description = "";
+  String _content = "";
   String _stock = "1"; // Default 1
   String _thumbnail = "";
   String _category = "dll"; // Default 'dll'
@@ -33,6 +37,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
     return Scaffold(
       appBar: AppBar(
         title: const Center(
@@ -62,7 +67,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
                     ),
                     onChanged: (String? value) {
                       setState(() {
-                        _name = value!;
+                        _title = value!;
                       });
                     },
                     validator: (String? value) {
@@ -113,7 +118,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
                     ),
                     onChanged: (String? value) {
                       setState(() {
-                        _description = value!;
+                        _content = value!;
                       });
                     },
                     validator: (String? value) {
@@ -212,48 +217,49 @@ class _ProductFormPageState extends State<ProductFormPage> {
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all(Colors.indigo),
                       ),
-                      onPressed: () {
+                      onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: const Text('Produk berhasil tersimpan'),
-                                content: SingleChildScrollView(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text('Nama: $_name'),
-                                      Text('Harga: $_price'),
-                                      Text('Deskripsi: $_description'),
-                                      Text('Stok: $_stock'),
-                                      Text('Kategori: $_category'),
-                                      Text('Thumbnail: $_thumbnail'),
-                                      Text('Unggulan: ${_isFeatured ? "Ya" : "Tidak"}'),
-                                    ],
-                                  ),
-                                ),
-                                actions: [
-                                  TextButton(
-                                    child: const Text('OK'),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                      setState(() {
-                                        _formKey.currentState!.reset();
-                                        _name = "";
-                                        _price = "";
-                                        _description = "";
-                                        _stock = "1";
-                                        _category = "dll";
-                                        _thumbnail = "";
-                                        _isFeatured = false;
-                                      });
-                                    },
-                                  ),
-                                ],
-                              );
-                            },
+
+                          // Ambil value dari form fields jika menggunakan onSaved
+                          // _formKey.currentState!.save();
+
+                          // Mengirim data ke Django
+                          final response = await request.postJson(
+                            // Pastikan endpoint sesuai dengan urls.py kamu (misal: create-flutter)
+                            "http://localhost:8000/create-flutter/",
+                            jsonEncode({
+                              "title": _title,
+                              "content": _content,
+                              "price": _price, // Pastikan ini integer. Jika string, gunakan int.parse(_price)
+                              "stock": _stock, // Pastikan ini integer. Jika string, gunakan int.parse(_stock)
+                              "category": _category,
+                              "thumbnail": _thumbnail, // Bisa string kosong jika user tidak input
+                              "is_featured": _isFeatured,
+                            }),
                           );
+
+                          if (context.mounted) {
+                            if (response['status'] == 'success') {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Product successfully saved!"),
+                                ),
+                              );
+
+                              // Navigasi kembali ke halaman utama atau list produk
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (context) => MyHomePage()),
+                                // Atau arahkan ke ProductEntryListPage()
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Something went wrong, please try again."),
+                                ),
+                              );
+                            }
+                          }
                         }
                       },
                       child: const Text(

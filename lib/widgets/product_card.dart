@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:sebelah_stadion/screens/product_entry_list.dart';
 import 'package:sebelah_stadion/screens/product_form.dart';
+import 'package:sebelah_stadion/screens/login.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 
 class ItemHomepage {
   final String name;
@@ -18,6 +22,7 @@ class ItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
     return Material(
       // Menentukan warna latar belakang dari tema aplikasi.
       color: item.color,
@@ -41,7 +46,22 @@ class ItemCard extends StatelessWidget {
               MaterialPageRoute(builder: (context) => const ProductFormPage()),
             );
           }
-
+          else if (item.name == "All Product") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ProductEntryListPage(filterByUser: false),
+              ),
+            );
+          }
+          else if (item.name == "My Product") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ProductEntryListPage(filterByUser: true),
+              ),
+            );
+          }
         },
         // Container untuk menyimpan Icon dan Text
         child: Container(
